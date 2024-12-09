@@ -1,107 +1,19 @@
 import 'package:flame/components.dart';
+import 'package:flame/experimental.dart';
 import 'package:flame/parallax.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame/events.dart';
+import 'package:weltraum_einwanderer/enemy.dart';
+import 'package:weltraum_einwanderer/player.dart';
 
-void main() {
-  runApp(GameWidget(game: SpaceShooterGame()));
-}
-
-class Player extends SpriteAnimationComponent
-    with HasGameReference<SpaceShooterGame> {
-  late final SpawnComponent _bulletSpawner;
-
-  Player()
-      : super(
-          size: Vector2(100, 150),
-          anchor: Anchor.center,
-        );
-
-  @override
-  Future<void> onLoad() async {
-    await super.onLoad();
-
-    animation = await game.loadSpriteAnimation(
-      'player.png',
-      SpriteAnimationData.sequenced(
-        amount: 4,
-        stepTime: .2,
-        textureSize: Vector2(32, 48),
-      ),
-    );
-
-    _bulletSpawner = SpawnComponent(
-      period: .02,
-      selfPositioning: true,
-      factory: (index) {
-        return Bullet(
-          position: position +
-              Vector2(
-                0,
-                -height / 2,
-              ),
-        );
-      },
-      autoStart: false,
-    );
-
-    game.add(_bulletSpawner);
-
-    position = game.size / 2;
-  }
-
-  void move(Vector2 delta) {
-    position.add(delta);
-  }
-
-  void startShooting() {
-    _bulletSpawner.timer.start();
-  }
-
-  void stopShooting() {
-    _bulletSpawner.timer.stop();
-  }
-}
-
-class Bullet extends SpriteAnimationComponent
-    with HasGameReference<SpaceShooterGame> {
-  Bullet({
-    super.position,
-  }) : super(
-          size: Vector2(25, 50),
-          anchor: Anchor.center,
-        );
-
-  @override
-  Future<void> onLoad() async {
-    await super.onLoad();
-
-    animation = await game.loadSpriteAnimation(
-      'bullet.png',
-      SpriteAnimationData.sequenced(
-        amount: 4,
-        stepTime: .2,
-        textureSize: Vector2(8, 16),
-      ),
-    );
-  }
-
-  @override
-  void update(double dt) {
-    super.update(dt);
-
-    position.y += dt * -500;
-
-    if (position.y < -height) {
-      removeFromParent();
-    }
-  }
-}
-
-class SpaceShooterGame extends FlameGame with PanDetector {
+class SpaceShooterGame extends FlameGame
+    with PanDetector, HasCollisionDetection {
   late Player player;
+
+  static const double enemySize = 30;
+  static const double playerSize = 50;
 
   @override
   Future<void> onLoad() async {
@@ -117,8 +29,19 @@ class SpaceShooterGame extends FlameGame with PanDetector {
     );
     add(parallax);
 
-    player = Player();
+    player = Player(screenSize: playerSize);
     add(player);
+
+    add(
+      SpawnComponent(
+          factory: (index) {
+            return Enemy(screenSize: enemySize, player: player);
+          },
+          period: 0.1,
+          area: Rectangle.fromLTWH(-enemySize, -enemySize,
+              size.x + 2 * (enemySize), size.y + 2 * (enemySize)),
+          within: false),
+    );
   }
 
   @override
@@ -135,4 +58,8 @@ class SpaceShooterGame extends FlameGame with PanDetector {
   void onPanEnd(DragEndInfo info) {
     player.stopShooting();
   }
+}
+
+void main() {
+  runApp(GameWidget(game: SpaceShooterGame()));
 }
