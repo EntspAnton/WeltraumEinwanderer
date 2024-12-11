@@ -37,7 +37,7 @@ class SpaceShooterGame extends FlameGame
           factory: (index) {
             return Enemy();
           },
-          period: 0.1,
+          period: 1,
           area: Rectangle.fromLTWH(0, 0, size.x, -Enemy.screenSize),
           within: false),
     );
