@@ -1,6 +1,6 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
-import 'package:weltraum_einwanderer/main.dart';
+import 'package:weltraum_einwanderer/space_shooter_game.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class StartPage extends StatefulWidget {
