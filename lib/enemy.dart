@@ -2,7 +2,8 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:weltraum_einwanderer/bullet.dart';
 import 'package:weltraum_einwanderer/explosion.dart';
-import 'package:weltraum_einwanderer/main.dart';
+import 'package:weltraum_einwanderer/space_shooter_game.dart';
+import 'package:weltraum_einwanderer/player.dart';
 
 class Enemy extends SpriteAnimationComponent
     with HasGameReference<SpaceShooterGame>, CollisionCallbacks {
@@ -52,6 +53,13 @@ class Enemy extends SpriteAnimationComponent
       removeFromParent();
       other.removeFromParent();
       game.add(Explosion(position: position, screenSize: screenSize * 1.5));
+      game.score += 1;
+    }
+
+    if (other is Player) {
+      removeFromParent();
+      game.score = 0;
+      game.add(Explosion(position: other.position, screenSize: screenSize * 3));
     }
   }
 }

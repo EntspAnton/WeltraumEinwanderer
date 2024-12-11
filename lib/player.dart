@@ -1,9 +1,10 @@
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:weltraum_einwanderer/bullet.dart';
-import 'package:weltraum_einwanderer/main.dart';
+import 'package:weltraum_einwanderer/space_shooter_game.dart';
 
 class Player extends SpriteAnimationComponent
-    with HasGameReference<SpaceShooterGame> {
+    with HasGameReference<SpaceShooterGame>, CollisionCallbacks {
   late final SpawnComponent _bulletSpawner;
   late final double screenSize;
   Player({this.screenSize = 100})
@@ -26,7 +27,7 @@ class Player extends SpriteAnimationComponent
     );
 
     _bulletSpawner = SpawnComponent(
-      period: .1,
+      period: .5,
       selfPositioning: true,
       factory: (index) {
         return Bullet(
@@ -40,10 +41,19 @@ class Player extends SpriteAnimationComponent
     game.add(_bulletSpawner);
 
     position = game.size / 2;
+
+    add(RectangleHitbox());
   }
 
   void move(Vector2 delta) {
-    position.add(delta);
+    position.add(delta * 1.8);
+    if (position.x < screenSize / 2) {
+      position.x = screenSize / 2;
+    }
+
+    if (position.x > game.size.x - screenSize / 2) {
+      position.x = game.size.x - screenSize / 2;
+    }
   }
 
   void startShooting() {

@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:weltraum_einwanderer/main.dart';
+import 'package:weltraum_einwanderer/space_shooter_game.dart';
 
 class Bullet extends SpriteAnimationComponent
     with HasGameReference<SpaceShooterGame> {
