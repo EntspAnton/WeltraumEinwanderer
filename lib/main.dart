@@ -6,6 +6,7 @@ import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame/events.dart';
 import 'package:weltraum_einwanderer/enemy.dart';
+import 'package:weltraum_einwanderer/pages/startpage.dart';
 import 'package:weltraum_einwanderer/player.dart';
 
 class SpaceShooterGame extends FlameGame
@@ -60,5 +61,9 @@ class SpaceShooterGame extends FlameGame
 }
 
 void main() {
-  runApp(GameWidget(game: SpaceShooterGame()));
+  runApp(
+    MaterialApp(
+      home: StartPage(),
+    ),
+  );
 }
