@@ -2,8 +2,6 @@ import 'package:flame/components.dart';
 import 'package:weltraum_einwanderer/bullet.dart';
 import 'package:weltraum_einwanderer/main.dart';
 
-import 'dart:math';
-
 class Player extends SpriteAnimationComponent
     with HasGameReference<SpaceShooterGame> {
   late final SpawnComponent _bulletSpawner;
@@ -27,19 +25,12 @@ class Player extends SpriteAnimationComponent
       ),
     );
 
-    Random random = Random();
-
     _bulletSpawner = SpawnComponent(
-      period: .04,
+      period: .1,
       selfPositioning: true,
       factory: (index) {
         return Bullet(
-          position: position +
-              Vector2(
-                0,
-                0,
-              ),
-          angle: random.nextDouble() * 2 * pi,
+          position: position + Vector2(0, -height / 2),
           screenSize: screenSize / 3,
         );
       },

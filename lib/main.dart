@@ -35,11 +35,10 @@ class SpaceShooterGame extends FlameGame
     add(
       SpawnComponent(
           factory: (index) {
-            return Enemy(screenSize: enemySize, player: player);
+            return Enemy();
           },
           period: 0.1,
-          area: Rectangle.fromLTWH(-enemySize, -enemySize,
-              size.x + 2 * (enemySize), size.y + 2 * (enemySize)),
+          area: Rectangle.fromLTWH(0, 0, size.x, -Enemy.screenSize),
           within: false),
     );
   }

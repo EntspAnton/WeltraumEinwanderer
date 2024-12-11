@@ -1,18 +1,14 @@
-import 'dart:math';
-
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:weltraum_einwanderer/bullet.dart';
 import 'package:weltraum_einwanderer/explosion.dart';
 import 'package:weltraum_einwanderer/main.dart';
-import 'package:weltraum_einwanderer/player.dart';
 
 class Enemy extends SpriteAnimationComponent
     with HasGameReference<SpaceShooterGame>, CollisionCallbacks {
-  double screenSize;
-  late Player player;
+  static double screenSize = 50;
 
-  Enemy({super.position, this.screenSize = 50, required this.player})
+  Enemy({super.position})
       : super(
           size: Vector2.all(screenSize),
           anchor: Anchor.center,
@@ -20,10 +16,6 @@ class Enemy extends SpriteAnimationComponent
 
   @override
   Future<void> onLoad() async {
-    Vector2 playerDirection = (position - player.position);
-    playerDirection /= playerDirection.length;
-
-    angle = atan2(playerDirection.y, playerDirection.x) - pi / 2;
     await super.onLoad();
 
     animation = await game.loadSpriteAnimation(
@@ -42,8 +34,7 @@ class Enemy extends SpriteAnimationComponent
   void update(double dt) {
     super.update(dt);
 
-    position.x += dt * cos(angle + pi / 2) * -200;
-    position.y += dt * sin(angle + pi / 2) * -200;
+    position.y += dt * 200;
 
     if (position.y > game.size.y) {
       removeFromParent();
