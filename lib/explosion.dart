@@ -3,10 +3,12 @@ import 'package:weltraum_einwanderer/main.dart';
 
 class Explosion extends SpriteAnimationComponent
     with HasGameReference<SpaceShooterGame> {
+  late final double screenSize;
   Explosion({
     super.position,
+    this.screenSize = 150,
   }) : super(
-          size: Vector2.all(150),
+          size: Vector2.all(screenSize),
           anchor: Anchor.center,
           removeOnFinish: true,
         );

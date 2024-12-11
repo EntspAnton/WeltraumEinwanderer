@@ -60,7 +60,7 @@ class Enemy extends SpriteAnimationComponent
     if (other is Bullet) {
       removeFromParent();
       other.removeFromParent();
-      game.add(Explosion(position: position));
+      game.add(Explosion(position: position, screenSize: screenSize * 1.5));
     }
   }
 }
