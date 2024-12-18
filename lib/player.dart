@@ -1,6 +1,7 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:weltraum_einwanderer/bullet.dart';
+import 'package:weltraum_einwanderer/currency.dart';
 import 'package:weltraum_einwanderer/space_shooter_game.dart';
 
 class Player extends SpriteAnimationComponent
@@ -62,5 +63,18 @@ class Player extends SpriteAnimationComponent
 
   void stopShooting() {
     _bulletSpawner.timer.stop();
+  }
+
+  @override
+  void onCollisionStart(
+    Set<Vector2> intersectionPoints,
+    PositionComponent other,
+  ) {
+    super.onCollisionStart(intersectionPoints, other);
+
+    if (other is GoldCoin) {
+      other.removeFromParent();
+      game.score += 1;
+    }
   }
 }
