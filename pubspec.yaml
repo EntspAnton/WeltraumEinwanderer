@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   flame: ^1.22.0
   google_fonts: ^6.2.1
+  shared_preferences: ^2.3.4
 
 dev_dependencies:
   flutter_test:
@@ -71,6 +72,11 @@ flutter:
     - assets/images/explosion.png
     - assets/images/enemy.png
     - assets/images/bullet.png
+    - assets/images/currency/coin-gold.png
+    - assets/images/currency/coin-blue.png
+    - assets/images/currency/coin-purple.png
+    - assets/images/currency/coin-green.png
+    - assets/images/currency/coin-azure.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

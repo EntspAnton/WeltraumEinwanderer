@@ -1,14 +1,17 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:weltraum_einwanderer/bullet.dart';
-import 'package:weltraum_einwanderer/currency.dart';
+import 'package:weltraum_einwanderer/coin.dart';
+import 'package:weltraum_einwanderer/scoreCounter.dart';
 import 'package:weltraum_einwanderer/space_shooter_game.dart';
 
 class Player extends SpriteAnimationComponent
     with HasGameReference<SpaceShooterGame>, CollisionCallbacks {
   late final SpawnComponent _bulletSpawner;
   late final double screenSize;
-  Player({this.screenSize = 100})
+  late final ScoreCounter scoreCounter;
+
+  Player({this.screenSize = 100, required this.scoreCounter})
       : super(
           size: Vector2(screenSize, screenSize * 1.5),
           anchor: Anchor.center,
@@ -55,6 +58,14 @@ class Player extends SpriteAnimationComponent
     if (position.x > game.size.x - screenSize / 2) {
       position.x = game.size.x - screenSize / 2;
     }
+
+    if (position.y < screenSize / 2) {
+      position.y = screenSize / 2;
+    }
+
+    if (position.y > game.size.y - screenSize / 2) {
+      position.y = game.size.y - screenSize / 2;
+    }
   }
 
   void startShooting() {
@@ -72,9 +83,10 @@ class Player extends SpriteAnimationComponent
   ) {
     super.onCollisionStart(intersectionPoints, other);
 
-    if (other is GoldCoin) {
+    if (other is Coin) {
+      game.score += other.value;
+      scoreCounter.updateScore(other.value);
       other.removeFromParent();
-      game.score += 1;
     }
   }
 }

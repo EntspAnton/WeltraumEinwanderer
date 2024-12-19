@@ -7,20 +7,29 @@ import 'package:flame/input.dart';
 import 'package:flame/events.dart';
 import 'package:weltraum_einwanderer/enemy.dart';
 import 'package:weltraum_einwanderer/player.dart';
+import 'package:weltraum_einwanderer/scoreCounter.dart';
 
 class SpaceShooterGame extends FlameGame
     with PanDetector, HasCollisionDetection {
-  late Player player;
-
+  // Game Values
   static const double enemySize = 30;
   static const double playerSize = 50;
 
   int score = 0;
 
-  late TextComponent scoreText;
+  // Main Game Objects
+  late ScoreCounter scoreCounter;
+  late Player player;
+  late SpawnComponent enemySpawner;
+
+  // Game-Over Effect
+  late Function(int) gameOver;
+
+  SpaceShooterGame({required this.gameOver});
 
   @override
   Future<void> onLoad() async {
+    // Parallax Background
     final parallax = await loadParallaxComponent(
       [
         ParallaxImageData('stars_0.png'),
@@ -31,39 +40,28 @@ class SpaceShooterGame extends FlameGame
       repeat: ImageRepeat.repeat,
       velocityMultiplierDelta: Vector2(0, 5),
     );
+
+    // Score Counter and Indicator
+    scoreCounter = ScoreCounter(position: Vector2(5, 20), screenHeight: 40);
+
+    // Player
+    player = Player(screenSize: playerSize, scoreCounter: scoreCounter);
+
+    enemySpawner = SpawnComponent(
+        factory: (index) {
+          return Enemy();
+        },
+        period: 1,
+        area: Rectangle.fromLTWH(0, 0, size.x, enemySize),
+        within: false);
+
+    // Add Objects to the Screen
     add(parallax);
 
-    player = Player(screenSize: playerSize);
+    add(enemySpawner);
     add(player);
 
-    add(
-      SpawnComponent(
-          factory: (index) {
-            return Enemy();
-          },
-          period: 1,
-          area: Rectangle.fromLTWH(0, 0, size.x, enemySize),
-          within: false),
-    );
-
-    scoreText = TextComponent(
-        text: score.toString(),
-        position: Vector2(size.x / 2, 50),
-        anchor: Anchor.topCenter,
-        textRenderer: TextPaint(
-          style: TextStyle(
-            fontSize: 48.0,
-            color: Colors.amber.shade50,
-          ),
-        ));
-
-    add(scoreText);
-  }
-
-  @override
-  void update(double dt) {
-    super.update(dt);
-    scoreText.text = score.toString();
+    add(scoreCounter);
   }
 
   @override

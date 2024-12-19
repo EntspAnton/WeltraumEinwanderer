@@ -1,7 +1,7 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:weltraum_einwanderer/bullet.dart';
-import 'package:weltraum_einwanderer/currency.dart';
+import 'package:weltraum_einwanderer/coin.dart';
 import 'package:weltraum_einwanderer/explosion.dart';
 import 'package:weltraum_einwanderer/space_shooter_game.dart';
 import 'package:weltraum_einwanderer/player.dart';
@@ -59,8 +59,8 @@ class Enemy extends SpriteAnimationComponent
 
     if (other is Player) {
       removeFromParent();
-      game.score = 0;
       game.add(Explosion(position: other.position, screenSize: screenSize * 3));
+      game.gameOver(game.score);
     }
   }
 }
