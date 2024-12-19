@@ -38,6 +38,7 @@ dependencies:
   flame: ^1.22.0
   google_fonts: ^6.2.1
   shared_preferences: ^2.3.4
+  dart_random_choice: ^0.2.0
 
 dev_dependencies:
   flutter_test:

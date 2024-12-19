@@ -1,3 +1,4 @@
+import 'package:dart_random_choice/dart_random_choice.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:weltraum_einwanderer/bullet.dart';
@@ -54,7 +55,20 @@ class Enemy extends SpriteAnimationComponent
       removeFromParent();
       other.removeFromParent();
       game.add(Explosion(position: position, screenSize: screenSize * 1.5));
-      game.add(GoldCoin(position: position, screenSize: 25));
+      Coin coin = randomChoice([
+        GoldCoin(position: position),
+        BlueCoin(position: position),
+        AzureCoin(position: position),
+        GreenCoin(position: position),
+        PurpleCoin(position: position)
+      ], [
+        0.6,
+        0.2,
+        0.1,
+        0.07,
+        0.03
+      ]);
+      game.add(coin);
     }
 
     if (other is Player) {

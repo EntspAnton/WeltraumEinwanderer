@@ -69,3 +69,33 @@ class BlueCoin extends Coin {
           value: 5,
         );
 }
+
+class AzureCoin extends Coin {
+  AzureCoin({
+    required super.position,
+    super.screenSize = 25,
+  }) : super(
+          spriteFile: "currency/coin-azure.png",
+          value: 10,
+        );
+}
+
+class GreenCoin extends Coin {
+  GreenCoin({
+    required super.position,
+    super.screenSize = 25,
+  }) : super(
+          spriteFile: "currency/coin-green.png",
+          value: 25,
+        );
+}
+
+class PurpleCoin extends Coin {
+  PurpleCoin({
+    required super.position,
+    super.screenSize = 25,
+  }) : super(
+          spriteFile: "currency/coin-purple.png",
+          value: 50,
+        );
+}
