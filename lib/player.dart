@@ -84,7 +84,6 @@ class Player extends SpriteAnimationComponent
     super.onCollisionStart(intersectionPoints, other);
 
     if (other is Coin) {
-      game.score += other.value;
       scoreCounter.updateScore(other.value);
       other.removeFromParent();
     }

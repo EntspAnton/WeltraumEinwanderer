@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:ui';
 
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +16,9 @@ class StartPage extends StatefulWidget {
 }
 
 class _StartPageState extends State<StartPage> {
-  Widget? _content;
+  late SpaceShooterGame game;
+  late GameWidget<SpaceShooterGame> gameWidget;
+  late Widget titleScreen;
   bool gameRunning = false;
   bool moneyLoaded = false;
 
@@ -25,29 +27,48 @@ class _StartPageState extends State<StartPage> {
   @override
   void initState() {
     super.initState();
+
+    FlutterView view = WidgetsBinding.instance.platformDispatcher.views.first;
+
+    // Dimensions in physical pixels (px)
+    Size size = view.physicalSize / view.devicePixelRatio;
+
+    game = SpaceShooterGame(
+        gameOver: endGame, screenSize: Vector2(size.width, size.height));
+
+    titleScreen = _getTitleScreen();
     loadMoney().then((result) {
-      _setTitleScreen();
+      titleScreen = _getTitleScreen();
     });
+
+    gameWidget = GameWidget(game: game);
   }
 
-  void _setTitleScreen() {
-    _content = Column(
+  Widget _getTitleScreen() {
+    return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Padding(
+          padding: const EdgeInsets.only(top: 50.0, bottom: 50.0),
+          child: Text(
+            'Weltraum Einwanderer',
+            style: GoogleFonts.quantico(
+              textStyle: const TextStyle(
+                  fontSize: 50,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(255, 165, 197, 243)),
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        Padding(
           padding: const EdgeInsets.all(50.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Money: ',
-                style: GoogleFonts.quantico(),
-              ),
-              Text(
-                money.toString(),
-                style: GoogleFonts.quantico(),
-              ),
-            ],
+          child: Text(
+            'Money: $money',
+            style: GoogleFonts.quantico(
+              textStyle: const TextStyle(
+                  fontSize: 40, color: Color.fromARGB(255, 165, 197, 243)),
+            ),
           ),
         ),
         ElevatedButton(
@@ -73,9 +94,10 @@ class _StartPageState extends State<StartPage> {
 
   void _startGame() {
     print('start');
-    _content = GameWidget(game: SpaceShooterGame(gameOver: endGame));
-    gameRunning = true;
-    setState(() {});
+    setState(() {
+      titleScreen = Container();
+    });
+    game.startGame();
   }
 
   Future<void> endGame(int score) async {
@@ -89,24 +111,29 @@ class _StartPageState extends State<StartPage> {
     await prefs.setInt('total_money', money);
     gameRunning = false;
     setState(() {
-      _setTitleScreen();
+      titleScreen = _getTitleScreen();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        bottomOpacity: 0,
-        //toolbarOpacity: 0,
-        title: Text(
-          'Weltraum Einwanderer',
-          style: GoogleFonts.quantico(),
-        ),
-      ),
+      // appBar: AppBar(
+      //   bottomOpacity: 0,
+      //   //toolbarOpacity: 0,
+      //   title: Text(
+      //     'Weltraum Einwanderer',
+      //     style: GoogleFonts.quantico(),
+      //   ),
+      // ),
       body: SafeArea(
           child: Center(
-        child: _content,
+        child: Stack(
+          children: [
+            gameWidget,
+            titleScreen,
+          ],
+        ),
       )),
     );
   }

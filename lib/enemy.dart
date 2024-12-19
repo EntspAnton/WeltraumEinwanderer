@@ -58,9 +58,10 @@ class Enemy extends SpriteAnimationComponent
     }
 
     if (other is Player) {
+      other.stopShooting();
       removeFromParent();
       game.add(Explosion(position: other.position, screenSize: screenSize * 3));
-      game.gameOver(game.score);
+      game.endGame();
     }
   }
 }

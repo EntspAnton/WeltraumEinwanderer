@@ -35,6 +35,11 @@ class ScoreCounter extends PositionComponent
     score += amount;
     scoreText.text = score.toString();
   }
+
+  void resetScore() {
+    score = 0;
+    scoreText.text = score.toString();
+  }
 }
 
 class MoneySprite extends SpriteComponent
