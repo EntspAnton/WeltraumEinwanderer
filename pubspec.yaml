@@ -73,11 +73,16 @@ flutter:
     - assets/images/explosion.png
     - assets/images/enemy.png
     - assets/images/bullet.png
+    - assets/images/heart.png
     - assets/images/currency/coin-gold.png
     - assets/images/currency/coin-blue.png
     - assets/images/currency/coin-purple.png
     - assets/images/currency/coin-green.png
     - assets/images/currency/coin-azure.png
+    - assets/images/items/shooter.png
+    - assets/images/items/spiral.png
+    - assets/images/items/questionmark.png
+    - assets/images/items/shotgun.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

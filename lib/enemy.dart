@@ -1,9 +1,15 @@
 import 'package:dart_random_choice/dart_random_choice.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:weltraum_einwanderer/bullet.dart';
+import 'package:weltraum_einwanderer/game_objects/bullet.dart';
 import 'package:weltraum_einwanderer/coin.dart';
 import 'package:weltraum_einwanderer/explosion.dart';
+import 'package:weltraum_einwanderer/game_objects/fuck_all_weapon.dart';
+import 'package:weltraum_einwanderer/game_objects/item_spawner.dart';
+import 'package:weltraum_einwanderer/game_objects/shooter.dart';
+import 'package:weltraum_einwanderer/game_objects/shotgun.dart';
+import 'package:weltraum_einwanderer/game_objects/spiral_weapon.dart';
+import 'package:weltraum_einwanderer/item.dart';
 import 'package:weltraum_einwanderer/space_shooter_game.dart';
 import 'package:weltraum_einwanderer/player.dart';
 
@@ -55,27 +61,14 @@ class Enemy extends SpriteAnimationComponent
       removeFromParent();
       other.removeFromParent();
       game.add(Explosion(position: position, screenSize: screenSize * 1.5));
-      Coin coin = randomChoice([
-        GoldCoin(position: position),
-        BlueCoin(position: position),
-        AzureCoin(position: position),
-        GreenCoin(position: position),
-        PurpleCoin(position: position)
-      ], [
-        0.6,
-        0.2,
-        0.1,
-        0.07,
-        0.03
-      ]);
-      game.add(coin);
+
+      game.add(game.itemSpawner.getRandomItem(position));
     }
 
     if (other is Player) {
-      other.stopShooting();
+      game.lifeCounter.looseLife();
       removeFromParent();
       game.add(Explosion(position: other.position, screenSize: screenSize * 3));
-      game.endGame();
     }
   }
 }

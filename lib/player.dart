@@ -1,17 +1,25 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:weltraum_einwanderer/bullet.dart';
 import 'package:weltraum_einwanderer/coin.dart';
-import 'package:weltraum_einwanderer/scoreCounter.dart';
+import 'package:weltraum_einwanderer/game_objects/fuck_all_weapon.dart';
+import 'package:weltraum_einwanderer/game_objects/shooter.dart';
+import 'package:weltraum_einwanderer/game_objects/shotgun.dart';
+import 'package:weltraum_einwanderer/game_objects/spaceship_weapon.dart';
+import 'package:weltraum_einwanderer/game_objects/spiral_weapon.dart';
+import 'package:weltraum_einwanderer/item.dart';
+import 'package:weltraum_einwanderer/score_counter.dart';
 import 'package:weltraum_einwanderer/space_shooter_game.dart';
+import 'package:weltraum_einwanderer/weapon_item.dart';
 
 class Player extends SpriteAnimationComponent
     with HasGameReference<SpaceShooterGame>, CollisionCallbacks {
-  late final SpawnComponent _bulletSpawner;
   late final double screenSize;
   late final ScoreCounter scoreCounter;
+  late Weapon weapon;
+  bool shootingActive = false;
 
-  Player({this.screenSize = 100, required this.scoreCounter})
+  Player(
+      {this.screenSize = 100, required this.scoreCounter, required this.weapon})
       : super(
           size: Vector2(screenSize, screenSize * 1.5),
           anchor: Anchor.center,
@@ -30,23 +38,10 @@ class Player extends SpriteAnimationComponent
       ),
     );
 
-    _bulletSpawner = SpawnComponent(
-      period: .5,
-      selfPositioning: true,
-      factory: (index) {
-        return Bullet(
-          position: position + Vector2(0, -height / 2),
-          screenSize: screenSize / 3,
-        );
-      },
-      autoStart: false,
-    );
-
-    game.add(_bulletSpawner);
-
     position = game.size / 2;
 
     add(RectangleHitbox());
+    add(weapon);
   }
 
   void move(Vector2 delta) {
@@ -66,14 +61,37 @@ class Player extends SpriteAnimationComponent
     if (position.y > game.size.y - screenSize / 2) {
       position.y = game.size.y - screenSize / 2;
     }
+
+    weapon.position = position;
   }
 
   void startShooting() {
-    _bulletSpawner.timer.start();
+    if (!shootingActive) {
+      weapon.startShooting();
+      shootingActive = true;
+    }
   }
 
   void stopShooting() {
-    _bulletSpawner.timer.stop();
+    if (shootingActive) {
+      weapon.stopShooting();
+      shootingActive = false;
+    }
+  }
+
+  void changeWeapon(Weapon newWeapon) {
+    if (shootingActive) {
+      weapon.stopShooting();
+    }
+    weapon.removeFromParent();
+    weapon = newWeapon;
+    add(weapon);
+
+    if (shootingActive) {
+      print("Continue Shooting");
+      weapon.startShooting();
+    }
+    game.itemSpawner.currentWeapon = weapon.itemType;
   }
 
   @override
@@ -85,6 +103,26 @@ class Player extends SpriteAnimationComponent
 
     if (other is Coin) {
       scoreCounter.updateScore(other.value);
+      other.removeFromParent();
+    }
+
+    if (other is WeaponItem) {
+      Weapon newWeapon;
+      print("shooting: $shootingActive");
+      if (other is SpiralWeaponItem) {
+        print("Spiral");
+        newWeapon = SpiralWeapon(position: position, active: shootingActive);
+      } else if (other is FuckYouAllWeaponItem) {
+        print("Fuck You");
+        newWeapon = FuckAllWeapon(position: position, active: shootingActive);
+      } else if (other is ShotgunWeaponItem) {
+        print("Shotgun");
+        newWeapon = ShotgunWeapon(position: position, active: shootingActive);
+      } else {
+        print("Shooter");
+        newWeapon = ShooterWeapon(position: position, active: shootingActive);
+      }
+      changeWeapon(newWeapon);
       other.removeFromParent();
     }
   }

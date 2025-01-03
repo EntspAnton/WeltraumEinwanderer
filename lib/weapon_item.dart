@@ -1,20 +1,21 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:weltraum_einwanderer/item.dart';
+import 'package:weltraum_einwanderer/game_objects/item_spawner.dart';
 import 'package:weltraum_einwanderer/space_shooter_game.dart';
 
-class Coin extends SpriteAnimationComponent
+class WeaponItem extends SpriteComponent
     with HasGameReference<SpaceShooterGame> {
   late final double screenSize;
   late final String spriteFile;
-  late final int value;
 
   late final int fallingSpeed;
 
-  Coin(
+  late final ItemType itemType;
+
+  WeaponItem(
       {required super.position,
       required this.spriteFile,
-      required this.value,
+      required this.itemType,
       this.screenSize = 25,
       this.fallingSpeed = 250})
       : super(
@@ -26,14 +27,8 @@ class Coin extends SpriteAnimationComponent
   Future<void> onLoad() async {
     await super.onLoad();
 
-    animation = await game.loadSpriteAnimation(
-      spriteFile,
-      SpriteAnimationData.sequenced(
-        amount: 4,
-        stepTime: .2,
-        textureSize: Vector2(16, 16),
-      ),
-    );
+    sprite = await game.loadSprite(spriteFile,
+        srcPosition: Vector2.all(0), srcSize: Vector2.all(16));
 
     add(
       RectangleHitbox(collisionType: CollisionType.passive),
@@ -51,52 +46,32 @@ class Coin extends SpriteAnimationComponent
   }
 }
 
-class GoldCoin extends Coin {
-  GoldCoin({
+class SpiralWeaponItem extends WeaponItem {
+  SpiralWeaponItem({
     required super.position,
     super.screenSize = 25,
-  }) : super(
-          spriteFile: "currency/coin-gold.png",
-          value: 1,
-        );
+  }) : super(spriteFile: "items/spiral.png", itemType: ItemType.spiralWeapon);
 }
 
-class BlueCoin extends Coin {
-  BlueCoin({
+class ShooterWeaponItem extends WeaponItem {
+  ShooterWeaponItem({
     required super.position,
     super.screenSize = 25,
-  }) : super(
-          spriteFile: "currency/coin-blue.png",
-          value: 5,
-        );
+  }) : super(spriteFile: "items/shooter.png", itemType: ItemType.shooterWeapon);
 }
 
-class AzureCoin extends Coin {
-  AzureCoin({
+class FuckYouAllWeaponItem extends WeaponItem {
+  FuckYouAllWeaponItem({
     required super.position,
     super.screenSize = 25,
   }) : super(
-          spriteFile: "currency/coin-azure.png",
-          value: 10,
-        );
+            spriteFile: "items/questionmark.png",
+            itemType: ItemType.fuckYouAllWeapon);
 }
 
-class GreenCoin extends Coin {
-  GreenCoin({
+class ShotgunWeaponItem extends WeaponItem {
+  ShotgunWeaponItem({
     required super.position,
     super.screenSize = 25,
-  }) : super(
-          spriteFile: "currency/coin-green.png",
-          value: 25,
-        );
-}
-
-class PurpleCoin extends Coin {
-  PurpleCoin({
-    required super.position,
-    super.screenSize = 25,
-  }) : super(
-          spriteFile: "currency/coin-purple.png",
-          value: 50,
-        );
+  }) : super(spriteFile: "items/shotgun.png", itemType: ItemType.shooterWeapon);
 }

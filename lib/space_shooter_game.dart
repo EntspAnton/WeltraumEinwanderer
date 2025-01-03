@@ -5,11 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame/events.dart';
-import 'package:weltraum_einwanderer/bullet.dart';
+import 'package:weltraum_einwanderer/game_objects/bullet.dart';
 import 'package:weltraum_einwanderer/coin.dart';
 import 'package:weltraum_einwanderer/enemy.dart';
+import 'package:weltraum_einwanderer/game_objects/item_spawner.dart';
+import 'package:weltraum_einwanderer/game_objects/shooter.dart';
+import 'package:weltraum_einwanderer/item.dart';
+import 'package:weltraum_einwanderer/life_counter.dart';
 import 'package:weltraum_einwanderer/player.dart';
-import 'package:weltraum_einwanderer/scoreCounter.dart';
+import 'package:weltraum_einwanderer/score_counter.dart';
 
 class SpaceShooterGame extends FlameGame
     with PanDetector, HasCollisionDetection {
@@ -22,8 +26,11 @@ class SpaceShooterGame extends FlameGame
 
   // Main Game Objects
   late ScoreCounter scoreCounter;
+  late LifeCounter lifeCounter;
   late Player player;
   late SpawnComponent enemySpawner;
+
+  late final ItemSpawner itemSpawner;
 
   // Game-Over Effect
   late Function(int) gameOver;
@@ -40,7 +47,7 @@ class SpaceShooterGame extends FlameGame
         ParallaxImageData('stars_1.png'),
         ParallaxImageData('stars_2.png'),
       ],
-      baseVelocity: Vector2(0, -5),
+      baseVelocity: Vector2(0, -2),
       repeat: ImageRepeat.repeat,
       velocityMultiplierDelta: Vector2(0, 5),
     );
@@ -55,33 +62,48 @@ class SpaceShooterGame extends FlameGame
         autoStart: false);
 
     scoreCounter = ScoreCounter(position: Vector2(5, 20), screenHeight: 40);
+    lifeCounter = LifeCounter(
+        lifes: 1, position: Vector2(screenSize.x - 150, 20), screenSize: 40);
 
     // Player
-    player = Player(screenSize: playerSize, scoreCounter: scoreCounter);
+    player = Player(
+        screenSize: playerSize,
+        scoreCounter: scoreCounter,
+        weapon: ShooterWeapon(position: screenSize / 2));
 
     // Add Background to the Screen
     add(parallax);
 
     add(enemySpawner);
+
+    itemSpawner = ItemSpawner(currentWeapon: player.weapon.itemType);
+
+    itemSpawner.addItem(ItemType.shooterWeapon, 30);
+    itemSpawner.addItem(ItemType.shotgunWeapon, 30);
+    itemSpawner.addItem(ItemType.spiralWeapon, 30);
+    itemSpawner.addItem(ItemType.fuckYouAllWeapon, 30);
   }
 
   void startGame() {
-    // scoreCounter.resetScore();
     player.position = screenSize / 2;
     add(player);
 
     add(scoreCounter);
+    add(lifeCounter);
 
     scoreCounter.resetScore();
+    // lifeCounter.resetScore();
 
     gameRunning = true;
     enemySpawner.timer.start();
   }
 
   void endGame() {
+    player.stopShooting();
     remove(player);
 
     remove(scoreCounter);
+    remove(lifeCounter);
 
     for (Component component in children) {
       if (component is Enemy || component is Coin || component is Bullet) {
